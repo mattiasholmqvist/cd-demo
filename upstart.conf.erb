@@ -1,0 +1,11 @@
+description cd-demo-service
+start on runlevel [2345]
+stop on runlevel [!2345]
+respawn
+respawn limit 360 180
+
+script
+    set -e
+    exec sudo -u <%=user %> java -jar /home/<%=user %>/service.jar server /home/<%= user %>/service.yml
+end script
+

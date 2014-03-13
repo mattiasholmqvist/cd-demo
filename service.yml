@@ -1,0 +1,4 @@
+# See https://github.com/dropwizard/dropwizard/blob/v0.6.2/dropwizard-example/example.yml for options
+http:
+  port: 8080
+  adminPort: 8081

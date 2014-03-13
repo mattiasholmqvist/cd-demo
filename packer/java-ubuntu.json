@@ -1,0 +1,51 @@
+{
+    "variables": {
+        "aws_access_key": "{{env `AWS_ACCESS_KEY`}}",
+        "aws_secret_key": "{{env `AWS_SECRET_KEY`}}",
+        "HOME": "{{env `HOME`}}"
+    },
+    "builders": [
+        {
+            "type": "virtualbox-ovf",
+            "shutdown_command": "echo 'shutdown -P now' > shutdown.sh; echo 'vagrant'|sudo -S sh 'shutdown.sh'",
+            "source_path": "out/box.ovf",
+            "ssh_key_path": "{{user `HOME`}}/.vagrant.d/insecure_private_key",
+            "ssh_username": "vagrant",
+            "headless": true,
+            "ssh_wait_timeout": "2m",
+
+            "virtualbox_version_file": ".vbox_version"
+        },
+        {
+            "type": "amazon-ebs",
+            "access_key": "{{user `aws_access_key`}}",
+            "secret_key": "{{user `aws_secret_key`}}",
+            "region": "eu-west-1",
+            "source_ami": "ami-ec50a19b",
+            "instance_type": "t1.micro",
+            "ssh_username": "ubuntu",
+            "ami_name": "citerus-cd-demo {{timestamp}}"
+        }
+    ],
+    "post-processors": [
+        {
+            "compression_level": 9,
+            "type": "vagrant",
+            "output": "out/ubuntu-minimal-test-java.box"
+        }
+    ],
+    "provisioners": [
+        {
+            "override": {
+                "virtualbox-ovf": {
+                    "execute_command": "chmod +x {{ .Path }}; {{ .Vars }} sudo -E '{{ .Path }}'"
+                }
+            },
+            "scripts": [
+                "script/install_java.sh",
+                "script/cleanup.sh"
+            ],
+            "type": "shell"
+        }
+    ]
+}

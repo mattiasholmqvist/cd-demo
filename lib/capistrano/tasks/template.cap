@@ -1,0 +1,17 @@
+require 'erb'
+
+class Template
+  def initialize(hash)
+    hash.each do |key, value|
+      singleton_class.send(:define_method, key) { value }
+    end
+  end
+
+  def get_binding
+    binding # So that everything can be used in templates generated for the servers
+  end
+
+  def erb(file)
+    ERB.new(File.read(file)).result(self.get_binding)
+  end
+end

@@ -1,0 +1,7 @@
+.idea
+*.iml
+*.iso
+.capistrano
+.vagrant
+packer/out
+target
